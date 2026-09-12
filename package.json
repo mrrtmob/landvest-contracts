@@ -1,0 +1,24 @@
+{
+  "name": "landvest-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Smart contracts for the LandVest tokenized real-estate platform",
+  "type": "module",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "node": "hardhat node",
+    "deploy:local": "hardhat run scripts/deploy.ts --network localhost",
+    "seed:local": "hardhat run scripts/seed.ts --network localhost"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox-viem": "^5.0.0",
+    "@types/node": "^22.18.12",
+    "hardhat": "^3.0.9",
+    "typescript": "~5.8.0",
+    "viem": "^2.38.4"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.4.0"
+  }
+}
