@@ -126,3 +126,44 @@ src/components/chain/wallet-button.tsx   the header control
 
 The project's "no network" rule now has a second, explicit exception: JSON-RPC calls to the chain,
 made only from `src/chain/*`.
+
+## 6. Troubleshooting
+
+**Every request to `127.0.0.1` fails in the Network tab (`net::ERR_CONNECTION_REFUSED`), tUSD shows $0,
+the page shows the demo data.** The browser cannot reach the chain. Start `npx hardhat node` in
+`landvest-contracts`, run the seed, reload. Since this fix the Connect Wallet menu refuses to connect
+and shows the same message instead of failing silently.
+
+**The node runs in WSL, Docker or on another machine.** `127.0.0.1` in the browser is the browser's
+machine. Point `rpcUrl` in `land-investment/src/chain/deployment.json` at the host that runs the node
+(and start the node with `npx hardhat node --hostname 0.0.0.0`).
+
+**"Contract reverted" or empty marketplace after restarting the node.** A restarted node is empty.
+Run the seed again; addresses stay the same on a fresh node. In MetaMask, clear the account's
+activity data so its nonce matches.
+
+**`Cannot find module './deployment.json'` when the UI starts.** The seed was never run on this
+machine and the file was not committed. Run the seed (it writes the file) or commit
+`src/chain/deployment.json` with the project.
+
+## 7. What is live in chain mode
+
+With a wallet connected, nothing shown in the three portals comes from the demo fixtures except
+descriptive metadata (a seeded property's photos, description, boundary and document names, which
+are the off-chain bundle a real deployment would pin to IPFS). Everything else is read from the chain
+on every sync:
+
+| Screen | Source |
+|---|---|
+| Marketplace, property pages, price chart, timeline | property info / terms / state; price history is the launch NAV and the current NAV, the timeline is the recorded status changes and lock-up end |
+| Investor dashboard, portfolio chart, performance metrics, activity feed | the wallet's ledger rows and holdings |
+| Wallet, holdings, transaction history | `walletBalanceOf`, `getHolding`, `userLedger` |
+| Profile / KYC prefill, header identity | the wallet's KYC record (seeded addresses keep their fixture name) |
+| Merchant dashboard, properties, tokenization, company profile, KYB prefill | properties owned by the wallet and its KYB record |
+| Admin KPIs, users, merchants, verification queue, tokenization queue, transactions | registry lists, review timestamps, the full ledger |
+| Admin approval-trend chart | review timestamps over the last 30 days |
+| System overview, settings page | chain id, latest block, contract addresses, on-chain fee / limit settings |
+| Notifications | the wallet's ledger, plus waiting reviews for admins |
+
+Not modelled on-chain and therefore empty or absent in chain mode: compliance alerts, KYC document
+previews (the contract stores a metadata pointer only), valuation and withdrawal review queues.
