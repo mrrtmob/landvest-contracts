@@ -13,6 +13,12 @@ import hre, { network } from "hardhat";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
+/** Key-free public endpoints the browser can read through. */
+const PUBLIC_RPC_BY_CHAIN: Record<number, string> = {
+  31337: "http://127.0.0.1:8545",
+  11155111: "https://ethereum-sepolia-rpc.publicnode.com",
+};
+
 export async function deploy() {
   const connection = await network.getOrCreate();
   const { viem } = connection;
@@ -32,7 +38,8 @@ export async function deploy() {
     factory.address,
     admin.account.address, // treasury = admin on local networks
   ]);
-  await factory.write.setPlatform([platform.address]);
+  const setPlatformHash = await factory.write.setPlatform([platform.address]);
+  await publicClient.waitForTransactionReceipt({ hash: setPlatformHash });
 
   const names = ["MockUSD", "ComplianceRegistry", "PropertyTokenFactory", "LandVestPlatform", "PropertyToken"] as const;
   const abis: Record<string, unknown> = {};
@@ -41,7 +48,9 @@ export async function deploy() {
   const deployment = {
     chainId,
     network: connection.networkName,
-    rpcUrl: connection.networkName === "localhost" ? "http://127.0.0.1:8545" : null,
+    // The UI reads through this URL. Never write a private, key-bearing RPC
+    // URL here: the file ships with the front-end. Override with PUBLIC_RPC_URL.
+    rpcUrl: process.env.PUBLIC_RPC_URL ?? PUBLIC_RPC_BY_CHAIN[chainId] ?? null,
     deployedAt: new Date().toISOString(),
     admin: admin.account.address,
     treasury: admin.account.address,

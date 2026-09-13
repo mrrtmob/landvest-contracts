@@ -71,6 +71,16 @@ The private keys are the standard Hardhat ones printed by `npx hardhat node` (th
 must never hold real funds). Import #0, #1 and #2 into MetaMask to act as admin, merchant and
 investor.
 
+## Deploying to Sepolia
+
+```bash
+npx hardhat keystore set SEPOLIA_RPC_URL
+npx hardhat keystore set SEPOLIA_PRIVATE_KEY     # a throwaway account with ~0.1 Sepolia ETH
+npm run seed:sepolia                             # deploy + seed from that one account
+```
+
+Step by step, including what the UI needs afterwards: [`docs/TESTNET.md`](docs/TESTNET.md).
+
 ## Scripts
 
 | Command | What it does |
@@ -78,7 +88,8 @@ investor.
 | `npx hardhat test` | Runs `test/LandVest.ts` on the in-process simulated chain. |
 | `npx hardhat run scripts/deploy.ts --network localhost` | Deploys the contracts only. |
 | `npx hardhat run scripts/seed.ts --network localhost` | Deploys and seeds the demo world. |
-| `npx hardhat run scripts/seed.ts --network sepolia` | Same on Sepolia (set `SEPOLIA_RPC_URL` / `SEPOLIA_PRIVATE_KEY` via `npx hardhat keystore set`). |
+| `npm run seed:sepolia` | Deploys and seeds Sepolia from the single configured account (`scripts/seed-testnet.ts`). |
+| `npm run deploy:sepolia` | Deploys the contracts to Sepolia without seeding. |
 
 ## Layout
 

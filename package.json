@@ -9,7 +9,9 @@
     "test": "hardhat test",
     "node": "hardhat node",
     "deploy:local": "hardhat run scripts/deploy.ts --network localhost",
-    "seed:local": "hardhat run scripts/seed.ts --network localhost"
+    "seed:local": "hardhat run scripts/seed.ts --network localhost",
+    "seed:sepolia": "hardhat run scripts/seed-testnet.ts --network sepolia",
+    "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox-viem": "^5.0.0",
